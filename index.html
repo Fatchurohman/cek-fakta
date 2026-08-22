@@ -149,9 +149,9 @@
       background: #0f172a;
       border: 1px solid var(--border-color);
       color: var(--text-main);
-      padding: 12px 16px;
+      padding: 14px 16px;
       border-radius: 8px;
-      font-size: 0.95rem;
+      font-size: 1rem;
       outline: none;
       transition: border-color 0.2s;
     }
@@ -163,10 +163,10 @@
     button {
       background: var(--primary);
       color: #0f172a;
-      font-weight: 600;
-      font-size: 0.95rem;
+      font-weight: 700;
+      font-size: 1rem;
       border: none;
-      padding: 12px 20px;
+      padding: 14px 20px;
       border-radius: 8px;
       cursor: pointer;
       transition: background 0.2s, transform 0.1s;
@@ -178,6 +178,29 @@
 
     button:active {
       transform: scale(0.99);
+    }
+
+    .quick-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    .quick-link-btn {
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.8rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: border-color 0.2s;
+    }
+
+    .quick-link-btn:hover {
+      border-color: var(--primary);
     }
 
     .status-box {
@@ -208,7 +231,7 @@
       border-color: #475569;
     }
 
-    .badge-rating {
+    .badge-source {
       align-self: flex-start;
       padding: 4px 10px;
       border-radius: 6px;
@@ -216,47 +239,31 @@
       font-weight: 700;
       text-transform: uppercase;
       margin-bottom: 12px;
-    }
-
-    .rating-false {
-      background: var(--danger-bg);
-      color: var(--danger);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-
-    .rating-true {
-      background: var(--success-bg);
-      color: var(--success);
-      border: 1px solid rgba(34, 197, 94, 0.3);
-    }
-
-    .rating-neutral {
-      background: rgba(148, 163, 184, 0.15);
-      color: var(--text-muted);
-      border: 1px solid rgba(148, 163, 184, 0.3);
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(56, 189, 248, 0.3);
     }
 
     .fact-claim {
-      font-size: 0.95rem;
+      font-size: 1rem;
       line-height: 1.5;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 16px;
+      margin-bottom: 8px;
     }
 
-    .fact-meta {
-      font-size: 0.8rem;
+    .fact-snippet {
+      font-size: 0.9rem;
       color: var(--text-muted);
-      margin-bottom: 12px;
-      border-top: 1px solid var(--border-color);
-      padding-top: 12px;
+      line-height: 1.6;
+      margin-bottom: 16px;
     }
 
     .fact-link {
       color: var(--primary);
       text-decoration: none;
       font-size: 0.85rem;
-      font-weight: 500;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 4px;
@@ -282,15 +289,19 @@
   <main>
     <section class="hero">
       <h1>Lacak Berita & Verifikasi Klaim</h1>
-      <p>Verifikasi klaim informasi langsung dari basis data pemeriksa fakta tepercaya.</p>
+      <p>Verifikasi informasi dan rujuk catatan ensiklopedia/fakta secara instan dan gratis.</p>
     </section>
 
     <section class="search-panel">
       <form id="claim-form" class="form-grid">
-        <input type="text" id="api-key-input" placeholder="Google API Key Anda" required />
-        <input type="text" id="query-input" placeholder="Ketik kata kunci/judul berita yang ingin dicek..." required />
+        <input type="text" id="query-input" placeholder="Masukkan judul klaim atau kata kunci isu..." required />
         <button type="submit" id="search-btn">Cek Fakta Sekarang</button>
       </form>
+      
+      <div class="quick-links">
+        <a class="quick-link-btn" href="https://turnbackhoax.id" target="_blank" rel="noopener noreferrer">Database TurnBackHoax ID &rarr;</a>
+        <a class="quick-link-btn" href="https://cekfakta.com" target="_blank" rel="noopener noreferrer">Portal CekFakta.com &rarr;</a>
+      </div>
     </section>
 
     <div id="status-container" class="status-box"></div>
@@ -299,75 +310,65 @@
 
   <script>
     const claimForm = document.getElementById('claim-form');
-    const apiKeyInput = document.getElementById('api-key-input');
     const queryInput = document.getElementById('query-input');
     const statusContainer = document.getElementById('status-container');
     const resultsContainer = document.getElementById('results-container');
 
-    const getRatingClass = (ratingText) => {
-      if (!ratingText) return 'rating-neutral';
-      const text = ratingText.toLowerCase();
-      if (text.includes('salah') || text.includes('hoaks') || text.includes('false') || text.includes('keliru')) {
-        return 'rating-false';
-      }
-      if (text.includes('benar') || text.includes('true') || text.includes('fakta')) {
-        return 'rating-true';
-      }
-      return 'rating-neutral';
+    const cleanHtml = (rawHtml) => {
+      if (!rawHtml) return '';
+      const doc = new DOMParser().parseFromString(rawHtml, 'text/html');
+      return doc.body.textContent || '';
     };
 
     claimForm.addEventListener('submit', async (event) => {
       event.preventDefault();
 
-      const apiKey = apiKeyInput.value.trim();
       const query = queryInput.value.trim();
 
-      if (!apiKey || !query) {
-        statusContainer.textContent = 'Harap lengkapi semua kolom input.';
+      if (!query) {
+        statusContainer.textContent = 'Harap isi kata kunci yang ingin diperiksa.';
         return;
       }
 
-      statusContainer.textContent = 'Memeriksa ke server data fakta...';
+      statusContainer.textContent = `Menelusuri rujukan data untuk: "${query}"...`;
       resultsContainer.innerHTML = '';
 
-      const targetUrl = `https://factchecktools.googleapis.com/v1alpha1/claims:search?query=${encodeURIComponent(query)}&key=${apiKey}&languageCode=id`;
+      const targetUrl = `https://id.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
 
       try {
         const response = await fetch(targetUrl);
 
         if (!response.ok) {
-          throw new Error(`Koneksi API gagal: ${response.status} (${response.statusText})`);
+          throw new Error(`Koneksi server gagal: ${response.status}`);
         }
 
         const data = await response.json();
+        const searchResults = data?.query?.search;
 
-        if (!data || !Array.isArray(data.claims) || data.claims.length === 0) {
-          statusContainer.textContent = 'Tidak ditemukan ulasan cek fakta untuk kata kunci tersebut.';
+        if (!Array.isArray(searchResults) || searchResults.length === 0) {
+          statusContainer.textContent = 'Tidak ditemukan catatan fakta langsung pada kata kunci ini. Disarankan periksa melalui TurnBackHoax / CekFakta pada tombol di atas.';
           return;
         }
 
-        statusContainer.textContent = `Menampilkan ${data.claims.length} ulasan klaim terverifikasi:`;
+        statusContainer.textContent = `Ditemukan ${searchResults.length} rujukan informasi relevan:`;
 
-        data.claims.forEach((item) => {
-          const claimTitle = item?.text || 'Klaim tidak tersedia';
-          const review = Array.isArray(item?.claimReview) && item.claimReview.length > 0 ? item.claimReview[0] : null;
-
-          const publisherName = review?.publisher?.name || 'Pemeriksa Independen';
-          const ratingText = review?.textualRating || 'Klaim Terdaftar';
-          const sourceUrl = review?.url || '#';
-          const ratingClass = getRatingClass(ratingText);
+        searchResults.forEach((item) => {
+          const title = item?.title || 'Informasi Terkait';
+          const snippet = cleanHtml(item?.snippet) || 'Tidak ada pratinjau teks.';
+          const pageId = item?.pageid;
+          const articleUrl = pageId ? `https://id.wikipedia.org/?curid=${pageId}` : `https://id.wikipedia.org/wiki/${encodeURIComponent(title)}`;
 
           const card = document.createElement('div');
           card.className = 'fact-card';
           card.innerHTML = `
             <div>
-              <span class="badge-rating ${ratingClass}">${ratingText}</span>
-              <p class="fact-claim">"${claimTitle}"</p>
+              <span class="badge-source">Ensiklopedia / Arsip Data</span>
+              <h2 class="fact-claim">${title}</h2>
+              <p class="fact-snippet">${snippet}...</p>
             </div>
             <div>
-              <div class="fact-meta">Verifikator: <strong>${publisherName}</strong></div>
-              <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer" class="fact-link">
-                Buka Artikel Sumber &rarr;
+              <a href="${articleUrl}" target="_blank" rel="noopener noreferrer" class="fact-link">
+                Baca Dokumen Rujukan Lengkap &rarr;
               </a>
             </div>
           `;
@@ -375,7 +376,7 @@
         });
 
       } catch (err) {
-        statusContainer.textContent = `Terjadi kesalahan: ${err.message}`;
+        statusContainer.textContent = `Terjadi kesalahan saat memuat data: ${err.message}`;
       }
     });
   </script>
