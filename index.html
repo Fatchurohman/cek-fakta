@@ -13,10 +13,12 @@
       --primary: #38bdf8;
       --primary-hover: #0ea5e9;
       --border-color: #334155;
-      --danger: #ef4444;
+      --warning-bg: rgba(245, 158, 11, 0.1);
+      --warning-border: #f59e0b;
+      --warning-text: #fbbf24;
       --danger-bg: rgba(239, 68, 68, 0.15);
-      --success: #22c55e;
-      --success-bg: rgba(34, 197, 94, 0.15);
+      --danger-border: #ef4444;
+      --danger-text: #f87171;
     }
 
     * {
@@ -134,7 +136,7 @@
       padding: 24px;
       border-radius: 16px;
       max-width: 750px;
-      margin: 0 auto 40px auto;
+      margin: 0 auto 30px auto;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
     }
 
@@ -178,29 +180,6 @@
 
     button:active {
       transform: scale(0.99);
-    }
-
-    .quick-links {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 15px;
-    }
-
-    .quick-link-btn {
-      background: #1e293b;
-      border: 1px solid var(--border-color);
-      color: var(--primary);
-      text-decoration: none;
-      font-size: 0.8rem;
-      padding: 6px 12px;
-      border-radius: 6px;
-      transition: border-color 0.2s;
-    }
-
-    .quick-link-btn:hover {
-      border-color: var(--primary);
     }
 
     .status-box {
@@ -272,6 +251,76 @@
     .fact-link:hover {
       text-decoration: underline;
     }
+
+    /* Warning / Unverified Card */
+    .warning-card {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 14px;
+      padding: 24px;
+      max-width: 750px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .warning-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .warning-icon {
+      font-size: 1.5rem;
+    }
+
+    .warning-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--warning-text);
+    }
+
+    .warning-desc {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .warning-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .action-btn {
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .action-btn-primary {
+      background: #f59e0b;
+      color: #0f172a;
+    }
+
+    .action-btn-primary:hover {
+      background: #d97706;
+    }
+
+    .action-btn-secondary {
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid var(--border-color);
+    }
+
+    .action-btn-secondary:hover {
+      border-color: #94a3b8;
+    }
   </style>
 </head>
 <body>
@@ -289,19 +338,14 @@
   <main>
     <section class="hero">
       <h1>Lacak Berita & Verifikasi Klaim</h1>
-      <p>Verifikasi informasi dan rujuk catatan ensiklopedia/fakta secara instan dan gratis.</p>
+      <p>Verifikasi kredibilitas informasi dari rujukan ensiklopedia dan pangkalan data publik.</p>
     </section>
 
     <section class="search-panel">
       <form id="claim-form" class="form-grid">
-        <input type="text" id="query-input" placeholder="Masukkan judul klaim atau kata kunci isu..." required />
+        <input type="text" id="query-input" placeholder="Masukkan judul klaim atau isu berita..." required />
         <button type="submit" id="search-btn">Cek Fakta Sekarang</button>
       </form>
-      
-      <div class="quick-links">
-        <a class="quick-link-btn" href="https://turnbackhoax.id" target="_blank" rel="noopener noreferrer">Database TurnBackHoax ID &rarr;</a>
-        <a class="quick-link-btn" href="https://cekfakta.com" target="_blank" rel="noopener noreferrer">Portal CekFakta.com &rarr;</a>
-      </div>
     </section>
 
     <div id="status-container" class="status-box"></div>
@@ -326,11 +370,11 @@
       const query = queryInput.value.trim();
 
       if (!query) {
-        statusContainer.textContent = 'Harap isi kata kunci yang ingin diperiksa.';
+        statusContainer.textContent = 'Harap masukkan kata kunci berita.';
         return;
       }
 
-      statusContainer.textContent = `Menelusuri rujukan data untuk: "${query}"...`;
+      statusContainer.textContent = `Memindai arsip data untuk: "${query}"...`;
       resultsContainer.innerHTML = '';
 
       const targetUrl = `https://id.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
@@ -339,22 +383,46 @@
         const response = await fetch(targetUrl);
 
         if (!response.ok) {
-          throw new Error(`Koneksi server gagal: ${response.status}`);
+          throw new Error(`Gagal menghubungi server rujukan (${response.status})`);
         }
 
         const data = await response.json();
         const searchResults = data?.query?.search;
 
         if (!Array.isArray(searchResults) || searchResults.length === 0) {
-          statusContainer.textContent = 'Tidak ditemukan catatan fakta langsung pada kata kunci ini. Disarankan periksa melalui TurnBackHoax / CekFakta pada tombol di atas.';
+          statusContainer.textContent = '';
+          
+          const warningWrapper = document.createElement('div');
+          warningWrapper.style.gridColumn = '1 / -1';
+          warningWrapper.innerHTML = `
+            <div class="warning-card">
+              <div class="warning-header">
+                <span class="warning-icon">&#9888;&#65039;</span>
+                <span class="warning-title">Sumber Berita Tidak Terverifikasi / Tidak Ditemukan</span>
+              </div>
+              <p class="warning-desc">
+                Tidak ada dokumen, arsip sejarah, atau rujukan resmi yang mencatat klaim <strong>"${query}"</strong>. 
+                Berita ini berpotensi <strong>tidak memiliki sumber kredibel</strong>, <strong>rumor tanpa dasar</strong>, atau <strong>tidak dapat dipertanggungjawabkan</strong>.
+              </p>
+              <div class="warning-actions">
+                <a href="https://turnbackhoax.id/?s=${encodeURIComponent(query)}" target="_blank" rel="noopener noreferrer" class="action-btn action-btn-primary">
+                  Cek di TurnBackHoax.ID &rarr;
+                </a>
+                <a href="https://news.google.com/search?q=${encodeURIComponent(query)}&hl=id&gl=ID&ceid=ID:id" target="_blank" rel="noopener noreferrer" class="action-btn action-btn-secondary">
+                  Cari di Google News &rarr;
+                </a>
+              </div>
+            </div>
+          `;
+          resultsContainer.appendChild(warningWrapper);
           return;
         }
 
-        statusContainer.textContent = `Ditemukan ${searchResults.length} rujukan informasi relevan:`;
+        statusContainer.textContent = `Ditemukan ${searchResults.length} rujukan data terkait:`;
 
         searchResults.forEach((item) => {
-          const title = item?.title || 'Informasi Terkait';
-          const snippet = cleanHtml(item?.snippet) || 'Tidak ada pratinjau teks.';
+          const title = item?.title || 'Dokumen Terkait';
+          const snippet = cleanHtml(item?.snippet) || 'Tidak ada ringkasan teks.';
           const pageId = item?.pageid;
           const articleUrl = pageId ? `https://id.wikipedia.org/?curid=${pageId}` : `https://id.wikipedia.org/wiki/${encodeURIComponent(title)}`;
 
@@ -362,13 +430,13 @@
           card.className = 'fact-card';
           card.innerHTML = `
             <div>
-              <span class="badge-source">Ensiklopedia / Arsip Data</span>
+              <span class="badge-source">Arsip Terdaftar</span>
               <h2 class="fact-claim">${title}</h2>
               <p class="fact-snippet">${snippet}...</p>
             </div>
             <div>
               <a href="${articleUrl}" target="_blank" rel="noopener noreferrer" class="fact-link">
-                Baca Dokumen Rujukan Lengkap &rarr;
+                Buka Rujukan Lengkap &rarr;
               </a>
             </div>
           `;
@@ -376,7 +444,7 @@
         });
 
       } catch (err) {
-        statusContainer.textContent = `Terjadi kesalahan saat memuat data: ${err.message}`;
+        statusContainer.textContent = `Terjadi kesalahan saat memproses data: ${err.message}`;
       }
     });
   </script>
