@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verifikasi Fakta & Pelacak Hoaks</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --border-color: #334155;
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --success: #22c55e;
+      --success-bg: rgba(34, 197, 94, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      width: 100%;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.5px;
+    }
+
+    .brand span {
+      color: var(--primary);
+    }
+
+    .dev-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1e293b;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      border: 1px solid var(--border-color);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      }
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+      }
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+      }
+    }
+
+    main {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .search-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 24px;
+      border-radius: 16px;
+      max-width: 750px;
+      margin: 0 auto 40px auto;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    input {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+    }
+
+    button {
+      background: var(--primary);
+      color: #0f172a;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button:hover {
+      background: var(--primary-hover);
+    }
+
+    button:active {
+      transform: scale(0.99);
+    }
+
+    .status-box {
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 25px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .fact-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.2s;
+    }
+
+    .fact-card:hover {
+      border-color: #475569;
+    }
+
+    .badge-rating {
+      align-self: flex-start;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .rating-false {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .rating-true {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .rating-neutral {
+      background: rgba(148, 163, 184, 0.15);
+      color: var(--text-muted);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .fact-claim {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+
+    .fact-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 12px;
+    }
+
+    .fact-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .fact-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="nav-container">
+      <div class="brand">Fact<span>Check</span> ID</div>
+      <div class="dev-badge">
+        <span class="pulse-dot"></span>
+        <span>developer : fatur62</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Lacak Berita & Verifikasi Klaim</h1>
+      <p>Verifikasi klaim informasi langsung dari basis data pemeriksa fakta tepercaya.</p>
+    </section>
+
+    <section class="search-panel">
+      <form id="claim-form" class="form-grid">
+        <input type="text" id="api-key-input" placeholder="Google API Key Anda" required />
+        <input type="text" id="query-input" placeholder="Ketik kata kunci/judul berita yang ingin dicek..." required />
+        <button type="submit" id="search-btn">Cek Fakta Sekarang</button>
+      </form>
+    </section>
+
+    <div id="status-container" class="status-box"></div>
+    <div id="results-container" class="results-grid"></div>
+  </main>
+
+  <script>
+    const claimForm = document.getElementById('claim-form');
+    const apiKeyInput = document.getElementById('api-key-input');
+    const queryInput = document.getElementById('query-input');
+    const statusContainer = document.getElementById('status-container');
+    const resultsContainer = document.getElementById('results-container');
+
+    const getRatingClass = (ratingText) => {
+      if (!ratingText) return 'rating-neutral';
+      const text = ratingText.toLowerCase();
+      if (text.includes('salah') || text.includes('hoaks') || text.includes('false') || text.includes('keliru')) {
+        return 'rating-false';
+      }
+      if (text.includes('benar') || text.includes('true') || text.includes('fakta')) {
+        return 'rating-true';
+      }
+      return 'rating-neutral';
+    };
+
+    claimForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const apiKey = apiKeyInput.value.trim();
+      const query = queryInput.value.trim();
+
+      if (!apiKey || !query) {
+        statusContainer.textContent = 'Harap lengkapi semua kolom input.';
+        return;
+      }
+
+      statusContainer.textContent = 'Memeriksa ke server data fakta...';
+      resultsContainer.innerHTML = '';
+
+      const targetUrl = `https://factchecktools.googleapis.com/v1alpha1/claims:search?query=${encodeURIComponent(query)}&key=${apiKey}&languageCode=id`;
+
+      try {
+        const response = await fetch(targetUrl);
+
+        if (!response.ok) {
+          throw new Error(`Koneksi API gagal: ${response.status} (${response.statusText})`);
+        }
+
+        const data = await response.json();
+
+        if (!data || !Array.isArray(data.claims) || data.claims.length === 0) {
+          statusContainer.textContent = 'Tidak ditemukan ulasan cek fakta untuk kata kunci tersebut.';
+          return;
+        }
+
+        statusContainer.textContent = `Menampilkan ${data.claims.length} ulasan klaim terverifikasi:`;
+
+        data.claims.forEach((item) => {
+          const claimTitle = item?.text || 'Klaim tidak tersedia';
+          const review = Array.isArray(item?.claimReview) && item.claimReview.length > 0 ? item.claimReview[0] : null;
+
+          const publisherName = review?.publisher?.name || 'Pemeriksa Independen';
+          const ratingText = review?.textualRating || 'Klaim Terdaftar';
+          const sourceUrl = review?.url || '#';
+          const ratingClass = getRatingClass(ratingText);
+
+          const card = document.createElement('div');
+          card.className = 'fact-card';
+          card.innerHTML = `
+            <div>
+              <span class="badge-rating ${ratingClass}">${ratingText}</span>
+              <p class="fact-claim">"${claimTitle}"</p>
+            </div>
+            <div>
+              <div class="fact-meta">Verifikator: <strong>${publisherName}</strong></div>
+              <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer" class="fact-link">
+                Buka Artikel Sumber &rarr;
+              </a>
+            </div>
+          `;
+          resultsContainer.appendChild(card);
+        });
+
+      } catch (err) {
+        statusContainer.textContent = `Terjadi kesalahan: ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
