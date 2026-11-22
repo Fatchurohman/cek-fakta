@@ -91,7 +91,7 @@
       background: var(--card-bg);
       color: var(--text-main);
       border: 1px solid var(--border-color);
-      padding: 7px 13px;
+      padding: 7px 14px;
       border-radius: 9999px;
       font-size: 0.84rem;
       font-weight: 600;
@@ -123,18 +123,6 @@
       border-radius: 50%;
       box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
       animation: pulse 1.8s infinite;
-    }
-
-    .api-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #64748b;
-    }
-
-    .api-dot.active {
-      background: #22c55e;
-      box-shadow: 0 0 6px #22c55e;
     }
 
     @keyframes pulse {
@@ -419,14 +407,13 @@
       border: 1px dashed var(--border-color);
       padding: 10px 14px;
       border-radius: 8px;
-      margin-bottom: 16px;
     }
 
     .keyword-bar strong {
       color: var(--primary);
     }
 
-    /* Fact Check Cards Grid */
+    /* Cards Grid */
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -443,21 +430,6 @@
       justify-content: space-between;
       gap: 12px;
     }
-
-    .rating-pill {
-      display: inline-block;
-      font-size: 0.75rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 6px;
-      letter-spacing: 0.03em;
-      width: fit-content;
-    }
-
-    .rating-false { background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger-border); }
-    .rating-true { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
-    .rating-warn { background: var(--warning-bg); color: var(--warning-text); border: 1px solid var(--warning-border); }
 
     .fact-claim {
       font-size: 0.96rem;
@@ -514,21 +486,6 @@
     .cc-btn span {
       font-size: 0.78rem;
       color: var(--text-muted);
-    }
-
-    /* Notice Box */
-    .info-notice {
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 10px;
-      padding: 16px;
-      font-size: 0.9rem;
-      color: #cbd5e1;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
     }
 
     .status-box {
@@ -662,21 +619,6 @@
       color: #fff;
     }
 
-    .api-input {
-      width: 100%;
-      background: #0b1120;
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 12px 14px;
-      border-radius: 8px;
-      font-size: 0.92rem;
-      outline: none;
-    }
-
-    .api-input:focus {
-      border-color: var(--primary);
-    }
-
     footer {
       text-align: center;
       padding: 20px;
@@ -700,10 +642,6 @@
       <div class="brand">Fact<span>Check</span> ID</div>
       <div class="nav-actions">
         <button type="button" class="nav-btn" id="open-guide-btn">📖 Baca Saya</button>
-        <button type="button" class="nav-btn" id="open-api-btn">
-          <span class="api-dot" id="api-status-dot"></span>
-          ⚙️ API Key
-        </button>
         <div class="dev-badge">
           <span class="pulse-dot"></span>
           <span>developer : fatur62</span>
@@ -715,7 +653,7 @@
   <main>
     <section class="hero">
       <h1>Verifikasi Fakta & Pelacak Pola Hoaks</h1>
-      <p>Tempel pesan berantai WhatsApp, judul berita viral, atau klaim tertentu untuk dianalisis polanya dan dilacak ke basis data pemeriksa fakta resmi.</p>
+      <p>Tempel pesan berantai WhatsApp, judul berita viral, atau klaim tertentu untuk dianalisis polanya dan dilacak langsung ke portal pemeriksa fakta resmi.</p>
     </section>
 
     <section class="search-panel">
@@ -757,25 +695,24 @@
       </div>
       <div class="modal-body">
         <div class="guide-block">
-          <h3>1. Apa Bedanya Aplikasi Ini dengan Pencarian Biasa?</h3>
+          <h3>1. Cara Kerja Aplikasi</h3>
           <p>
-            Aplikasi ini menggabungkan <strong>4 lapis pemeriksaan</strong> sekaligus dalam satu klik:
+            Aplikasi ini bekerja dalam <strong>3 lapis pemeriksaan</strong> tanpa perlu login atau pengaturan apa pun:
           </p>
           <ul class="guide-steps" style="margin-top:6px;">
-            <li><strong>Detektor Pola Hoaks (Otomatis & Offline):</strong> Memindai ciri khas pesan hoaks Indonesia (ajakan berantai, huruf kapital agresif, klaim "Info A1", pemicu panik, hingga tautan pendek mencurigakan).</li>
-            <li><strong>Basis Data Cek Fakta Resmi (Google Fact Check API):</strong> Menarik hasil verifikasi langsung dari Mafindo (TurnBackHoax), CekFakta, Kompas, Tempo, dan AFP jika API Key diaktifkan.</li>
-            <li><strong>Panel Lintas-Cek Cepat:</strong> Mengekstrak kata kunci inti dari pesan panjang, lalu menyiapkan tombol pelacakan instan ke 4 portal kredibel.</li>
+            <li><strong>Detektor Pola Hoaks (Otomatis):</strong> Memindai ciri khas pesan hoaks Indonesia (ajakan berantai, huruf kapital agresif, klaim "Info A1", pemicu panik, hingga tautan pendek mencurigakan).</li>
+            <li><strong>Panel Lintas-Cek Cepat:</strong> Mengekstrak kata kunci inti dari pesan panjang, lalu menyiapkan tombol pelacakan instan ke TurnBackHoax.ID, CekFakta.com, Google Fact Check, dan Google Berita.</li>
             <li><strong>Konteks Ensiklopedia (Wikipedia):</strong> Sekadar rujukan latar belakang topik, <em>bukan</em> penentu benar atau salah.</li>
           </ul>
         </div>
 
         <div class="guide-block">
-          <h3>2. Cara Penggunaan</h3>
+          <h3>2. Langkah Penggunaan</h3>
           <ol class="guide-steps">
             <li>Salin pesan WA, postingan media sosial, atau judul berita yang meragukan.</li>
             <li>Tempelkan ke kotak teks di halaman utama, lalu klik <strong>Analisis & Cek Fakta</strong>.</li>
             <li>Periksa <strong>Skor Risiko Pola Hoaks</strong> terlebih dahulu untuk melihat tanda bahaya bahasa.</li>
-            <li>Cek hasil <strong>Basis Data Cek Fakta</strong> atau klik tombol di <strong>Panel Lintas-Cek</strong> untuk memastikan status berita di TurnBackHoax.ID & Google News.</li>
+            <li>Klik salah satu tombol di <strong>Panel Lintas-Cek Cepat</strong> untuk memastikan status berita di portal pemeriksa fakta resmi.</li>
           </ol>
         </div>
 
@@ -800,39 +737,6 @@
             <button type="button" class="btn-try" data-try="netral">Coba Contoh Ini →</button>
           </div>
         </div>
-
-        <div class="guide-block">
-          <h3>4. Cara Mengaktifkan Google Fact Check API (Gratis)</h3>
-          <ol class="guide-steps">
-            <li>Buka <strong>console.cloud.google.com</strong> dan buat proyek baru (gratis).</li>
-            <li>Cari dan aktifkan API bernama <strong>Fact Check Tools API</strong>.</li>
-            <li>Masuk ke menu <em>Credentials</em> → <em>Create Credentials</em> → <em>API Key</em>.</li>
-            <li>Klik tombol <strong>⚙️ API Key</strong> di pojok kanan atas aplikasi ini dan simpan kuncinya. Kunci hanya disimpan di browser Anda sendiri (<code>localStorage</code>).</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL API KEY -->
-  <div class="modal-overlay" id="api-modal" role="dialog" aria-modal="true" aria-labelledby="api-title">
-    <div class="modal-box" style="max-width: 520px;">
-      <div class="modal-header">
-        <h2 id="api-title">⚙️ Pengaturan Google Fact Check API Key</h2>
-        <button type="button" class="modal-close" data-close="api-modal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p>
-          Masukkan <strong>Google Fact Check Tools API Key</strong> agar aplikasi ini bisa menarik laporan verifikasi resmi langsung dari Mafindo, CekFakta, Kompas, Tempo, dan AFP.
-        </p>
-        <input type="password" id="api-key-input" class="api-input" placeholder="AIzaSy..." autocomplete="off" />
-        <p style="font-size: 0.8rem; color: var(--text-muted);">
-          * Opsional. Tanpa API Key, Detektor Pola Hoaks WA, Panel Lintas-Cek, dan Konteks Wikipedia tetap berjalan normal.
-        </p>
-        <div style="display:flex; gap:10px; justify-content:flex-end;">
-          <button type="button" class="btn-secondary" id="delete-api-btn">Hapus Key</button>
-          <button type="button" class="btn-primary" id="save-api-btn">Simpan Key</button>
-        </div>
       </div>
     </div>
   </div>
@@ -843,13 +747,7 @@
     const submitBtn = document.getElementById('submit-btn');
     const clearBtn = document.getElementById('clear-btn');
     const resultsWrapper = document.getElementById('results-wrapper');
-
     const guideModal = document.getElementById('guide-modal');
-    const apiModal = document.getElementById('api-modal');
-    const apiKeyInput = document.getElementById('api-key-input');
-    const apiStatusDot = document.getElementById('api-status-dot');
-
-    const STORAGE_KEY = 'factcheck_id_google_api_key';
 
     const SAMPLES = {
       'hoaks-wa': 'INFO A1 DARI GRUP SEBELAH!! DARURAT!! Minum air es campur garam jam 12 malam bisa menyembuhkan stroke dan jantung dalam 5 menit. Jangan berhenti di kamu, SEBARKAN ke 5 grup sebelum dihapus!!',
@@ -868,21 +766,7 @@
         .replace(/'/g, '&#039;');
     };
 
-    const safeUrl = (url) => {
-      if (typeof url !== 'string') return '#';
-      const trimmed = url.trim();
-      return (trimmed.startsWith('https://') || trimmed.startsWith('http://')) ? escapeHTML(trimmed) : '#';
-    };
-
-    // --- Manajemen API Key ---
-    const getApiKey = () => (localStorage.getItem(STORAGE_KEY) || '').trim();
-
-    const updateApiIndicator = () => {
-      const hasKey = Boolean(getApiKey());
-      apiStatusDot.classList.toggle('active', hasKey);
-    };
-
-    // --- Ekstraktor Kata Kunci Inti (Agar pesan WA panjang tetap bisa dicari di API/Web) ---
+    // --- Ekstraktor Kata Kunci Inti ---
     const extractSmartQuery = (rawText) => {
       const stopWords = new Set([
         'yang', 'dan', 'di', 'ke', 'dari', 'ini', 'itu', 'untuk', 'pada', 'dengan', 'adalah',
@@ -913,7 +797,6 @@
       const flags = [];
       const lower = text.toLowerCase();
 
-      // 1. Ajakan berantai / broadcast
       const chainKeywords = ['sebarkan', 'teruskan', 'bagikan ke', 'share ke', 'jangan berhenti di kamu', 'sebelum dihapus', 'tolong bantu share', 'viralkan'];
       const foundChain = chainKeywords.filter((k) => lower.includes(k));
       if (foundChain.length > 0) {
@@ -924,7 +807,6 @@
         });
       }
 
-      // 2. Klaim otoritas samar / palsu
       const authKeywords = ['info a1', 'grup sebelah', 'dari orang dalam', 'kata dokter', 'valid 100%', 'dijamin ampuh', 'terbukti ampuh', 'rahasia yang disembunyikan'];
       const foundAuth = authKeywords.filter((k) => lower.includes(k));
       if (foundAuth.length > 0) {
@@ -935,7 +817,6 @@
         });
       }
 
-      // 3. Pemicu panik atau iming-iming hadiah/bansos
       const baitKeywords = ['darurat', 'gempar', 'waspada', 'bantuan tunai', 'subsidi', 'hadiah', 'gratis', 'kuota habis', 'buruan daftar', 'menyembuhkan', 'sembuhkan'];
       const foundBait = baitKeywords.filter((k) => lower.includes(k));
       if (foundBait.length >= 2) {
@@ -952,7 +833,6 @@
         });
       }
 
-      // 4. Tautan pendek / domain rawan phishing
       const linkRegex = /(bit\.ly|tinyurl\.com|s\.id|cutt\.ly|rb\.gy|shorturl\.at|\.(xyz|top|click|buzz|info)\b)/i;
       const linkMatch = text.match(linkRegex);
       if (linkMatch) {
@@ -963,7 +843,6 @@
         });
       }
 
-      // 5. Huruf KAPITAL berlebihan
       const letters = text.replace(/[^a-zA-Z]/g, '');
       if (letters.length >= 20) {
         const upperCount = (letters.match(/[A-Z]/g) || []).length;
@@ -977,7 +856,6 @@
         }
       }
 
-      // 6. Tanda seru beruntun
       if (/!{2,}/.test(text)) {
         score += 10;
         flags.push({
@@ -1011,31 +889,6 @@
       return { score, level, label, barColor, flags };
     };
 
-    // --- Helper Warna Rating Google Fact Check ---
-    const getRatingClass = (ratingText) => {
-      const r = (ratingText || '').toLowerCase();
-      if (/salah|hoaks|hoax|false|palsu|disinformasi|menyesatkan|misleading|keliru|manipulasi|satire|tidak benar/.test(r)) {
-        return 'rating-false';
-      }
-      if (/benar|fakta|true|akurat|terverifikasi/.test(r) && !/sebagian|tidak/.test(r)) {
-        return 'rating-true';
-      }
-      return 'rating-warn';
-    };
-
-    // --- Fetch Google Fact Check API ---
-    const fetchFactChecks = async (smartQuery, apiKey) => {
-      if (!apiKey) return { status: 'no-key', claims: [] };
-      const url = `https://factchecktools.googleapis.com/v1alpha1/claims:search?query=${encodeURIComponent(smartQuery)}&languageCode=id&pageSize=6&key=${encodeURIComponent(apiKey)}`;
-      const res = await fetch(url);
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData?.error?.message || `HTTP ${res.status}`);
-      }
-      const data = await res.json();
-      return { status: 'ok', claims: Array.isArray(data.claims) ? data.claims : [] };
-    };
-
     // --- Fetch Wikipedia Context ---
     const fetchWikipedia = async (smartQuery) => {
       const url = `https://id.wikipedia.org/w/api.php?action=query&list=search&srlimit=3&srsearch=${encodeURIComponent(smartQuery)}&format=json&origin=*`;
@@ -1051,7 +904,6 @@
       if (!text) return;
 
       const smartQuery = extractSmartQuery(text);
-      const apiKey = getApiKey();
 
       submitBtn.disabled = true;
       submitBtn.textContent = 'Menganalisis...';
@@ -1063,11 +915,12 @@
 
       const analysis = analyzeHoaxPatterns(text);
 
-      // Jalankan fetch paralel
-      const [fcResult, wikiResult] = await Promise.allSettled([
-        fetchFactChecks(smartQuery, apiKey),
-        fetchWikipedia(smartQuery)
-      ]);
+      let wikiItems = [];
+      try {
+        wikiItems = await fetchWikipedia(smartQuery);
+      } catch (e) {
+        wikiItems = [];
+      }
 
       // 1. Bagian Detektor Pola Hoaks
       const flagsHtml = analysis.flags
@@ -1078,7 +931,7 @@
         <section class="section-box">
           <div class="section-header">
             <div class="section-title">1. Analisis Pola Bahasa & Ciri Hoaks</div>
-            <div class="section-sub">Pemindaian otomatis (lokal)</div>
+            <div class="section-sub">Pemindaian otomatis</div>
           </div>
           <div class="risk-banner risk-${analysis.level}">
             <div class="risk-top">
@@ -1096,79 +949,13 @@
         </section>
       `;
 
-      // 2. Bagian Google Fact Check API
-      let factCheckContent = '';
-      if (fcResult.status === 'fulfilled') {
-        if (fcResult.value.status === 'no-key') {
-          factCheckContent = `
-            <div class="info-notice">
-              <div>
-                <strong>Database Cek Fakta Resmi belum aktif.</strong><br/>
-                Masukkan Google Fact Check API Key (gratis) untuk menarik hasil verifikasi langsung dari Mafindo, CekFakta, Tempo, & Kompas di sini.
-              </div>
-              <button type="button" class="btn-try" id="inline-api-btn">⚙️ Atur API Key</button>
-            </div>
-          `;
-        } else if (fcResult.value.claims.length === 0) {
-          factCheckContent = `
-            <div class="info-notice" style="border-color: var(--warning-border); background: var(--warning-bg);">
-              <div>
-                Tidak ditemukan kecocokan persis di indeks Google Fact Check untuk <strong>"${escapeHTML(smartQuery)}"</strong>. Gunakan <strong>Panel Lintas-Cek</strong> di bawah untuk pencarian manual yang lebih luas.
-              </div>
-            </div>
-          `;
-        } else {
-          const cards = fcResult.value.claims.map((claim) => {
-            const review = (claim.claimReview && claim.claimReview[0]) || {};
-            const publisher = review.publisher?.name || 'Pemeriksa Fakta';
-            const rating = review.textualRating || 'Diperiksa';
-            const ratingClass = getRatingClass(rating);
-            const reviewUrl = safeUrl(review.url);
-            const claimText = escapeHTML(claim.text || review.title || 'Klaim terverifikasi');
-            const dateStr = review.reviewDate ? new Date(review.reviewDate).toLocaleDateString('id-ID') : '';
-
-            return `
-              <article class="fact-card">
-                <div>
-                  <span class="rating-pill ${ratingClass}">${escapeHTML(rating)}</span>
-                  <h3 class="fact-claim" style="margin-top:10px;">${claimText}</h3>
-                </div>
-                <div>
-                  <div class="fact-meta" style="margin-bottom:8px;">
-                    Diperiksa oleh: <strong>${escapeHTML(publisher)}</strong> ${dateStr ? `• ${escapeHTML(dateStr)}` : ''}
-                  </div>
-                  <a href="${reviewUrl}" target="_blank" rel="noopener noreferrer" class="fact-link">Baca laporan verifikasi →</a>
-                </div>
-              </article>
-            `;
-          }).join('');
-          factCheckContent = `<div class="cards-grid">${cards}</div>`;
-        }
-      } else {
-        factCheckContent = `
-          <div class="info-notice" style="border-color: var(--danger-border); background: var(--danger-bg);">
-            <div>Gagal memuat Google Fact Check API: <strong>${escapeHTML(fcResult.reason?.message || 'Periksa API Key Anda')}</strong></div>
-          </div>
-        `;
-      }
-
-      const factCheckSection = `
-        <section class="section-box">
-          <div class="section-header">
-            <div class="section-title">2. Basis Data Pemeriksa Fakta Resmi</div>
-            <div class="section-sub">Google Fact Check Tools API</div>
-          </div>
-          ${factCheckContent}
-        </section>
-      `;
-
-      // 3. Panel Lintas-Cek Cepat (Selalu Muncul)
+      // 2. Panel Lintas-Cek Cepat
       const qEnc = encodeURIComponent(smartQuery);
       const crossCheckSection = `
         <section class="section-box">
           <div class="section-header">
-            <div class="section-title">3. Panel Lintas-Cek Cepat</div>
-            <div class="section-sub">Buka pelacakan langsung di portal resmi</div>
+            <div class="section-title">2. Panel Lintas-Cek Cepat</div>
+            <div class="section-sub">Buka pelacakan langsung di portal pemeriksa fakta resmi</div>
           </div>
           <div class="crosscheck-grid">
             <a class="cc-btn" href="https://turnbackhoax.id/?s=${qEnc}" target="_blank" rel="noopener noreferrer">
@@ -1191,10 +978,10 @@
         </section>
       `;
 
-      // 4. Konteks Ensiklopedia (Wikipedia)
+      // 3. Konteks Ensiklopedia (Wikipedia)
       let wikiContent = '';
-      if (wikiResult.status === 'fulfilled' && wikiResult.value.length > 0) {
-        const wikiCards = wikiResult.value.map((item) => {
+      if (wikiItems.length > 0) {
+        const wikiCards = wikiItems.map((item) => {
           const cleanSnippet = (item.snippet || '').replace(/<\/?[^>]+(>|$)/g, '');
           return `
             <article class="fact-card">
@@ -1214,19 +1001,14 @@
       const wikiSection = `
         <section class="section-box">
           <div class="section-header">
-            <div class="section-title">4. Konteks Tambahan (Wikipedia)</div>
+            <div class="section-title">3. Konteks Tambahan (Wikipedia)</div>
             <div class="section-sub">Hanya latar belakang topik, bukan penentu benar/salah</div>
           </div>
           ${wikiContent}
         </section>
       `;
 
-      resultsWrapper.innerHTML = patternSection + factCheckSection + crossCheckSection + wikiSection;
-
-      const inlineApiBtn = document.getElementById('inline-api-btn');
-      if (inlineApiBtn) {
-        inlineApiBtn.addEventListener('click', openApiModal);
-      }
+      resultsWrapper.innerHTML = patternSection + crossCheckSection + wikiSection;
 
       submitBtn.disabled = false;
       submitBtn.textContent = 'Analisis & Cek Fakta';
@@ -1236,13 +1018,7 @@
     const openModal = (el) => el.classList.add('open');
     const closeModal = (el) => el.classList.remove('open');
 
-    const openApiModal = () => {
-      apiKeyInput.value = getApiKey();
-      openModal(apiModal);
-    };
-
     document.getElementById('open-guide-btn').addEventListener('click', () => openModal(guideModal));
-    document.getElementById('open-api-btn').addEventListener('click', openApiModal);
 
     document.querySelectorAll('[data-close]').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -1251,28 +1027,8 @@
       });
     });
 
-    [guideModal, apiModal].forEach((modal) => {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal(modal);
-      });
-    });
-
-    document.getElementById('save-api-btn').addEventListener('click', () => {
-      const val = apiKeyInput.value.trim();
-      if (val) {
-        localStorage.setItem(STORAGE_KEY, val);
-      } else {
-        localStorage.removeItem(STORAGE_KEY);
-      }
-      updateApiIndicator();
-      closeModal(apiModal);
-    });
-
-    document.getElementById('delete-api-btn').addEventListener('click', () => {
-      localStorage.removeItem(STORAGE_KEY);
-      apiKeyInput.value = '';
-      updateApiIndicator();
-      closeModal(apiModal);
+    guideModal.addEventListener('click', (e) => {
+      if (e.target === guideModal) closeModal(guideModal);
     });
 
     // --- Contoh Interaktif ---
@@ -1303,8 +1059,6 @@
       resultsWrapper.innerHTML = '';
       queryInput.focus();
     });
-
-    updateApiIndicator();
   </script>
 </body>
 </html>
